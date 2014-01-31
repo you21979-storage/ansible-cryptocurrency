@@ -1,0 +1,23 @@
+---
+- hosts: all
+  user: root
+
+  vars:
+    tmpdir: /tmp
+  tasks:
+    - name: yum install
+      yum: name={{item}} state=latest
+      with_items:
+        - git
+        - gcc
+        - readline-devel
+        - ncurses-devel
+        - openssl-devel
+    - name: git download softether
+      git: repo=https://github.com/SoftEtherVPN/SoftEtherVPN.git dest={{tmpdir}}/softether
+    - name: configure
+      command: cp src/makefiles/linux_32bit.mak Makefile chdir={{tmpdir}}/softether
+    - name: make
+      command: make chdir={{tmpdir}}/softether
+    - name: install
+      command: make install chdir={{tmpdir}}/softether
