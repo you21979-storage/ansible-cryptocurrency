@@ -16,7 +16,7 @@
     - name: git download softether
       git: repo=https://github.com/SoftEtherVPN/SoftEtherVPN.git dest={{tmpdir}}/softether
     - name: configure
-      command: cp src/makefiles/linux_32bit.mak Makefile chdir={{tmpdir}}/softether
+      command: cp src/makefiles/linux_64bit.mak Makefile chdir={{tmpdir}}/softether
     - name: make
       command: make chdir={{tmpdir}}/softether
     - name: install
