@@ -6,23 +6,25 @@
     tmpdir: /tmp
     installdir: /opt/cpuminer
   tasks:
-    - name: yum install
-      yum: name={{item}} state=latest
-      with_items:
-      - git
-      - gcc
-      - automake
-      - autoconf
-      - libtool
-      - libcurl
-      - libcurl-dev
-    - name: git download cpuminer
-      git: repo=https://github.com/pooler/cpuminer.git dest={{tmpdir}}/cpuminer
-    - name: automake
-      command: ./autogen.sh chdir={{tmpdir}}/cpuminer
-    - name: make
-      command: make chdir={{tmpdir}}/cpuminer
-    - name: install directory create
-      file: dest={{installdir}} state=directory
-    - name: install litecoind {{installdir}}/bin/litecoind
-      copy: src={{tmpdir}}/minerd dest={{installdir}}/minerd mode=0755
+#    - name: yum install
+#      yum: name={{item}} state=latest
+#      with_items:
+#      - git
+#      - gcc
+#      - automake
+#      - autoconf
+#      - libtool
+#      - libcurl
+#      - libcurl-devel
+#    - name: git download cpuminer
+#      git: repo=https://github.com/pooler/cpuminer.git dest={{tmpdir}}/cpuminer
+#    - name: automake
+#      command: ./autogen.sh chdir={{tmpdir}}/cpuminer
+#    - name: configure
+#      command: ./configure chdir={{tmpdir}}/cpuminer
+#    - name: make
+#      command: make chdir={{tmpdir}}/cpuminer
+#    - name: install directory create
+#      file: dest={{installdir}} state=directory
+    - name: install cpuminer {{installdir}}
+      copy: src={{tmpdir}}/cpuminer/minerd dest={{installdir}}/minerd mode=0755
