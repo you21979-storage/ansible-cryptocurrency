@@ -1,0 +1,23 @@
+---
+- hosts: all
+  user: root
+
+  vars:
+    tmpdir: /tmp
+    installdir: /opt/netperf
+  tasks:
+    - name: yum install
+      yum: name={{item}} state=latest
+      with_items:
+        - git
+        - gcc
+    - name: ftp download netperf
+      get_url: url=ftp://ftp.netperf.org/netperf/netperf-2.6.0.tar.bz2 dest={{tmpdir}} mode=0440
+    - name: extend
+      command: tar jxvf netperf-2.6.0.tar.bz2 chdir={{tmpdir}}
+    - name: configure
+      command: ./configure --prefix={{installdir}} chdir={{tmpdir}}/netperf-2.6.0
+    - name: make
+      command: make chdir={{tmpdir}}/netperf-2.6.0
+    - name: install -> {{installdir}}
+      command: make install chdir={{tmpdir}}/netperf-2.6.0

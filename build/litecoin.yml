@@ -1,4 +1,4 @@
----                                                                                                                                                            
+---
 - hosts: all
   user: root
 
@@ -17,20 +17,20 @@
       - zlib-static
       - db4-cxx
       - db4-devel
-    - name: www download openssl                                                                                                                               
-      get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440                                                               
-    - name: git download miniupnp                                                                                                                              
-      git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp                                                                              
-    - name: git download litecoin                                                                                                                              
-      git: repo=https://github.com/litecoin-project/litecoin.git dest={{tmpdir}}/litecoin                                                                       
-    - name: expand openssl                                                                                                                                     
-      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}                                                                                      
-    - name: configure openssl                                                                                                                                  
-      command: ./config chdir={{tmpdir}}/openssl-1.0.1f                                                                                                        
-    - name: make openssl                                                                                                                                       
-      command: make chdir={{tmpdir}}/openssl-1.0.1f                                                                                                            
-    - name: make miniupnpc                                                                                                                                     
-      command: make chdir={{tmpdir}}/miniupnp/miniupnpc                                                                                                        
+    - name: www download openssl
+      get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
+    - name: git download miniupnp
+      git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
+    - name: git download litecoin
+      git: repo=https://github.com/litecoin-project/litecoin.git dest={{tmpdir}}/litecoin
+    - name: expand openssl
+      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
+    - name: configure openssl
+      command: ./config chdir={{tmpdir}}/openssl-1.0.1f
+    - name: make openssl
+      command: make chdir={{tmpdir}}/openssl-1.0.1f
+    - name: make miniupnpc
+      command: make chdir={{tmpdir}}/miniupnp/miniupnpc
     - name: prepare
       file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/litecoin/src/openssl state=link
     - name: prepare
@@ -47,3 +47,4 @@
       - data
     - name: install litecoind {{installdir}}/bin/litecoind
       copy: src={{tmpdir}}/litecoin/src/litecoind dest={{installdir}}/bin/litecoind mode=0755
+
