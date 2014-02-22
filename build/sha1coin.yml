@@ -1,0 +1,52 @@
+---
+- hosts: all
+  user: root
+
+  vars:
+    tmpdir: /tmp/sha1coin
+    installdir: /opt/sha1coin
+  tasks:
+    - name: yum install
+      yum: name={{item}} state=latest
+      with_items:
+      - git
+      - gcc
+      - gcc-c++
+      - boost-*
+      - zlib-devel
+      - zlib-static
+      - db4-cxx
+      - db4-devel
+    - name: temp directory create
+      file: dest={{tmpdir}} state=directory
+    - name: www download openssl
+      get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
+    - name: git download miniupnp
+      git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
+    - name: git download sha1coin
+      git: repo=https://github.com/ohac/sha1coin.git dest={{tmpdir}}/sha1coin
+    - name: expand openssl
+      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
+    - name: configure openssl
+      command: ./config chdir={{tmpdir}}/openssl-1.0.1f
+    - name: make openssl
+      command: make chdir={{tmpdir}}/openssl-1.0.1f
+    - name: make miniupnpc
+      command: make chdir={{tmpdir}}/miniupnp/miniupnpc
+    - name: prepare
+      file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/sha1coin/src/openssl state=link
+    - name: prepare
+      file: src={{tmpdir}}/miniupnp/miniupnpc path={{tmpdir}}/sha1coin/src/miniupnpc state=link
+    - name: prepare
+      file: src={{tmpdir}}/miniupnp/miniupnpc/libminiupnpc.a path={{tmpdir}}/sha1coin/src/libminiupnpc.a state=link
+    - name: make sha1coin
+      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L." chdir={{tmpdir}}/sha1coin/src
+    - name: install directory create
+      file: dest={{installdir}}/{{item}} state=directory
+      with_items:
+      - bin
+      - etc
+      - data
+    - name: install sha1coind {{installdir}}/bin/sha1coind
+      copy: src={{tmpdir}}/sha1coin/src/sha1coind dest={{installdir}}/bin/sha1coind mode=0755
+
