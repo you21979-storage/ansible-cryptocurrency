@@ -3,8 +3,8 @@
   user: root
 
   vars:
-    tmpdir: /tmp/litecoin
-    installdir: /opt/litecoin
+    tmpdir: /tmp/sakuracoin
+    installdir: /opt/sakuracoin
   tasks:
     - name: yum install
       yum: name={{item}} state=latest
@@ -23,8 +23,8 @@
       get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
-    - name: git download litecoin
-      git: repo=https://github.com/litecoin-project/litecoin.git dest={{tmpdir}}/litecoin
+    - name: git download sakuracoin
+      git: repo=https://github.com/ohac/sakuracoin.git dest={{tmpdir}}/sakuracoin
     - name: expand openssl
       command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
     - name: configure openssl
@@ -34,19 +34,19 @@
     - name: make miniupnpc
       command: make chdir={{tmpdir}}/miniupnp/miniupnpc
     - name: prepare
-      file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/litecoin/src/openssl state=link
+      file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/sakuracoin/src/openssl state=link
     - name: prepare
-      file: src={{tmpdir}}/miniupnp/miniupnpc path={{tmpdir}}/litecoin/src/miniupnpc state=link
+      file: src={{tmpdir}}/miniupnp/miniupnpc path={{tmpdir}}/sakuracoin/src/miniupnpc state=link
     - name: prepare
-      file: src={{tmpdir}}/miniupnp/miniupnpc/libminiupnpc.a path={{tmpdir}}/litecoin/src/libminiupnpc.a state=link
-    - name: make litecoin
-      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L." chdir={{tmpdir}}/litecoin/src
+      file: src={{tmpdir}}/miniupnp/miniupnpc/libminiupnpc.a path={{tmpdir}}/sakuracoin/src/libminiupnpc.a state=link
+    - name: make sakuracoin
+      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L." chdir={{tmpdir}}/sakuracoin/src
     - name: install directory create
       file: dest={{installdir}}/{{item}} state=directory
       with_items:
       - bin
       - etc
       - data
-    - name: install litecoind {{installdir}}/bin/litecoind
-      copy: src={{tmpdir}}/litecoin/src/litecoind dest={{installdir}}/bin/litecoind mode=0755
+    - name: install sakuracoind {{installdir}}/bin/sakuracoind
+      copy: src={{tmpdir}}/sakuracoin/src/sakuracoind dest={{installdir}}/bin/sakuracoind mode=0755
 

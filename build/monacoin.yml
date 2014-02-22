@@ -3,7 +3,7 @@
   user: root
 
   vars:
-    tmpdir: /tmp
+    tmpdir: /tmp/monacoin
     installdir: /opt/monacoin
   tasks:
     - name: yum install
@@ -17,6 +17,8 @@
       - zlib-static
       - db4-cxx
       - db4-devel
+    - name: temp directory create
+      file: dest={{tmpdir}} state=directory
     - name: www download openssl
       get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
