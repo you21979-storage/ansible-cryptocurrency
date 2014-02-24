@@ -1,0 +1,32 @@
+---
+- hosts: all
+  user: root
+
+  vars:
+    tmpdir: /tmp/softether
+  tasks:
+    - name: yum install
+      yum: name={{item}} state=latest
+      with_items:
+        - git
+        - gcc
+        - readline-devel
+        - ncurses-devel
+        - openssl-devel
+        - libselinux-python
+    - name: git download softether
+      git: repo=https://github.com/SoftEtherVPN/SoftEtherVPN.git dest={{tmpdir}}/softether
+    - name: download intel aes-ni
+      get_url: url=http://software.intel.com/sites/default/files/article/181731/intel-aesni-sample-library-v1.2.zip dest={{tmpdir}} mode=0440
+    - name: unzip
+      command: unzip -xo {{tmpdir}}/intel-aesni-sample-library-v1.2.zip chdir={{tmpdir}}
+    - name: make
+      command: ./mk_lnx64_all.sh chdir={{tmpdir}}/Intel_AESNI_Sample_Library_v1.2
+    - name: prepare
+      command: cp intel_aes_lib/lib/x64/intel_aes64.a {{tmpdir}}/softether chdir={{tmpdir}}/Intel_AESNI_Sample_Library_v1.2
+    - name: configure
+      copy: src=templates/softether_aesni/Makefile dest={{tmpdir}}/softether
+    - name: make
+      command: make chdir={{tmpdir}}/softether
+    - name: install
+      command: make install chdir={{tmpdir}}/softether
