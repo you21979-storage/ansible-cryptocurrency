@@ -48,5 +48,5 @@
       - etc
       - data
     - name: install monacoind {{installdir}}/bin/monacoind
-      copy: src={{tmpdir}}/monacoin/src/monacoind dest={{installdir}}/bin/monacoind mode=0755
+      file: src={{tmpdir}}/monacoin/src/monacoind dest={{installdir}}/bin/monacoind mode=0755 state=file
 
