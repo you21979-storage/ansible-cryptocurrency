@@ -48,5 +48,5 @@
       - etc
       - data
     - name: install litecoind {{installdir}}/bin/litecoind
-      file: src={{tmpdir}}/litecoin/src/litecoind dest={{installdir}}/bin/litecoind mode=0755 state=file
+      file: src={{tmpdir}}/litecoin/src/litecoind dest={{installdir}}/bin/litecoind mode=0755
 

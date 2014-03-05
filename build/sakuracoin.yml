@@ -48,5 +48,5 @@
       - etc
       - data
     - name: install sakuracoind {{installdir}}/bin/sakuracoind
-      file: src={{tmpdir}}/sakuracoin/src/sakuracoind dest={{installdir}}/bin/sakuracoind mode=0755 state=file
+      file: src={{tmpdir}}/sakuracoin/src/sakuracoind dest={{installdir}}/bin/sakuracoind mode=0755
 
