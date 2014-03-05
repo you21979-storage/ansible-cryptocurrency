@@ -5,7 +5,6 @@
   vars:
     tmpdir: /tmp/bitcoin
     installdir: /opt/bitcoin
-    version: v0.8.6
   tasks:
     - name: yum install
       yum: name={{item}} state=latest
@@ -28,7 +27,7 @@
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
     - name: git download bitcoin
-      git: repo=https://github.com/bitcoin/bitcoin.git dest={{tmpdir}}/bitcoin version={{version}}
+      git: repo=https://github.com/bitcoin/bitcoin.git dest={{tmpdir}}/bitcoin
 
     - name: expand bdb4.8
       command: tar zxvf {{tmpdir}}/db-4.8.30.tar.gz chdir={{tmpdir}}
@@ -66,8 +65,12 @@
     - name: muniupnp remove shared lib
       file: path={{tmpdir}}/lib/libminiupnpc.so state=absent
 
+    - name: autogen bitcoin
+      command: ./autogen.sh chdir={{tmpdir}}/bitcoin
+    - name: configure bitcoin
+      command: ./configure PKG_CONFIG_PATH="{{tmpdir}}/lib/pkgconfig" CXXFLAGS="-I{{tmpdir}}/include" LDFLAGS="-L{{tmpdir}}/lib" chdir={{tmpdir}}/bitcoin
     - name: make bitcoin
-      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt CXXFLAGS="-I{{tmpdir}}/include" LDFLAGS="-L{{tmpdir}}/lib" chdir={{tmpdir}}/bitcoin/src
+      command: make chdir={{tmpdir}}/bitcoin
     - name: install directory create
       file: dest={{installdir}}/{{item}} state=directory
       with_items:
