@@ -48,5 +48,5 @@
       - etc
       - data
     - name: install litecoind {{installdir}}/bin/litecoind
-      file: src={{tmpdir}}/litecoin/src/litecoind dest={{installdir}}/bin/litecoind mode=0755
+      command: cp {{tmpdir}}/litecoin/src/litecoind {{installdir}}/bin/litecoind creates={{installdir}}/bin/litecoind
 

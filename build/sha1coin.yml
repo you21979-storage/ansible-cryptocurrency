@@ -48,5 +48,5 @@
       - etc
       - data
     - name: install sha1coind {{installdir}}/bin/sha1coind
-      file: src={{tmpdir}}/sha1coin/src/sha1coind dest={{installdir}}/bin/sha1coind mode=0755
+      command: cp {{tmpdir}}/sha1coin/src/sha1coind {{installdir}}/bin/sha1coind creates={{installdir}}/bin/sha1coind
 
