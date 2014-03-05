@@ -68,7 +68,7 @@
     - name: autogen bitcoin
       command: ./autogen.sh chdir={{tmpdir}}/bitcoin
     - name: configure bitcoin
-      command: ./configure PKG_CONFIG_PATH="{{tmpdir}}/lib/pkgconfig" CXXFLAGS="-I{{tmpdir}}/include" LDFLAGS="-L{{tmpdir}}/lib -ldl" chdir={{tmpdir}}/bitcoin
+      command: ./configure PKG_CONFIG_PATH="{{tmpdir}}/lib/pkgconfig" CXXFLAGS="-I{{tmpdir}}/include" LDFLAGS="-L{{tmpdir}}/lib" chdir={{tmpdir}}/bitcoin
     - name: make bitcoin
       command: make chdir={{tmpdir}}/bitcoin
     - name: install directory create
