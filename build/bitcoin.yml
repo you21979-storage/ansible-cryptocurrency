@@ -3,12 +3,14 @@
   user: root
 
   vars:
-    tmpdir: /tmp/bitcoin
-    installdir: /opt/bitcoin
+    coinname: bitcoin
+    gitrepo: https://github.com/bitcoin/bitcoin.git
+    tmpdir: /tmp/{{coinname}}
+    installdir: /opt/{{coinname}}
     version: v0.8.6
   tasks:
     - name: yum install
-      yum: name={{item}} state=latest
+      yum: name={{item}} state=installed
       with_items:
       - git
       - gcc
@@ -16,19 +18,23 @@
       - boost-*
       - zlib-devel
       - zlib-static
-      - automake
-      - autoconf
-      - libtool
     - name: temp directory create
       file: dest={{tmpdir}} state=directory
-    - name: www download bdb4.8
-      get_url: url=http://download.oracle.com/berkeley-db/db-4.8.30.tar.gz dest={{tmpdir}} mode=0440
+    - name: git download {{coinname}}
+      git: repo={{gitrepo}} dest={{tmpdir}}/{{coinname}} version={{version}}
     - name: www download openssl
       get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
+    - name: www download bdb4.8
+      get_url: url=http://download.oracle.com/berkeley-db/db-4.8.30.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
-    - name: git download bitcoin
-      git: repo=https://github.com/bitcoin/bitcoin.git dest={{tmpdir}}/bitcoin version={{version}}
+
+    - name: expand openssl
+      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
+    - name: configure openssl
+      command: ./config chdir={{tmpdir}}/openssl-1.0.1f
+    - name: make openssl
+      command: make chdir={{tmpdir}}/openssl-1.0.1f
 
     - name: expand bdb4.8
       command: tar zxvf {{tmpdir}}/db-4.8.30.tar.gz chdir={{tmpdir}}
@@ -36,44 +42,20 @@
       command: ../dist/configure --prefix={{tmpdir}} --enable-static --enable-cxx chdir={{tmpdir}}/db-4.8.30/build_unix
     - name: make bdb4.8
       command: make chdir={{tmpdir}}/db-4.8.30/build_unix
-    - name: make install bdb4.8 -> {{tmpdir}}
-      command: make install chdir={{tmpdir}}/db-4.8.30/build_unix
-    - name: bdb4.8 remove shared lib
-      file: path={{tmpdir}}/lib/{{item}} state=absent
-      with_items:
-      - libdb-4.so
-      - libdb.so
-      - libdb_cxx-4.so
-      - libdb_cxx.so
-      - libdb-4.8.so
-      - libdb_cxx-4.8.so
-
-    - name: expand openssl
-      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
-    - name: configure openssl
-      command: ./config no-shared no-dso --prefix={{tmpdir}} chdir={{tmpdir}}/openssl-1.0.1f
-    - name: make openssl
-      command: make chdir={{tmpdir}}/openssl-1.0.1f
-    - name: make install openssl -> {{tmpdir}}
-      command: make install chdir={{tmpdir}}/openssl-1.0.1f
 
     - name: make miniupnpc
-      command: make chdir={{tmpdir}}/miniupnp/miniupnpc
-    - name: make install miniupnpc -> {{tmpdir}}
-      environment:
-        INSTALLPREFIX: "{{tmpdir}}"
-      command: make install chdir={{tmpdir}}/miniupnp/miniupnpc
-    - name: muniupnp remove shared lib
-      file: path={{tmpdir}}/lib/libminiupnpc.so state=absent
+      command: make SHAREDLIBRARY="libminiupnpc.x" chdir={{tmpdir}}/miniupnp/miniupnpc
 
-    - name: make bitcoin
-      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt CXXFLAGS="-I{{tmpdir}}/include" LDFLAGS="-L{{tmpdir}}/lib" chdir={{tmpdir}}/bitcoin/src
+    - name: make {{coinname}}
+      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt CXXFLAGS="-I{{tmpdir}}/db-4.8.30/build_unix -I{{tmpdir}}/openssl-1.0.1f/include -I{{tmpdir}}/miniupnp" LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L{{tmpdir}}/db-4.8.30/build_unix -L{{tmpdir}}/miniupnp/miniupnpc" chdir={{tmpdir}}/{{coinname}}/src
     - name: install directory create
       file: dest={{installdir}}/{{item}} state=directory
       with_items:
       - bin
       - etc
       - data
-    - name: install bitcoind {{installdir}}/bin/bitcoind
-      command: cp {{tmpdir}}/bitcoin/src/bitcoind {{installdir}}/bin/bitcoind creates={{installdir}}/bin/bitcoind
+    - name: install {{coinname}}d {{installdir}}/bin/{{coinname}}d
+      command: cp {{tmpdir}}/{{coinname}}/src/{{coinname}}d {{installdir}}/bin/{{coinname}}d creates={{installdir}}/bin/{{coinname}}d
+    - name: init script copy
+      template: src=templates/coind/init.j2 dest=/etc/init.d/{{coinname}}d mode=0755
 
