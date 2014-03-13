@@ -27,4 +27,4 @@
     - name: install directory create
       file: dest={{installdir}} state=directory
     - name: install cpuminer {{installdir}}
-      file: src={{tmpdir}}/cpuminer/minerd dest={{installdir}}/minerd mode=0755 state=file
+      commnad: cp {{tmpdir}}/cpuminer/minerd {{installdir}}/minerd creates={{installdir}}/minerd

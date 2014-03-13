@@ -3,8 +3,10 @@
   user: root
 
   vars:
-    tmpdir: /tmp/litecoin
-    installdir: /opt/litecoin
+    coinname: litecoin
+    tmpdir: /tmp/{{coinname}}
+    installdir: /opt/{{coinname}}
+    gitrepo: https://github.com/litecoin-project/litecoin.git
   tasks:
     - name: yum install
       yum: name={{item}} state=latest
@@ -19,12 +21,12 @@
       - db4-devel
     - name: temp directory create
       file: dest={{tmpdir}} state=directory
+    - name: git download {{coinname}}
+      git: repo={{gitrepo}} dest={{tmpdir}}/{{coinname}}
     - name: www download openssl
       get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
-    - name: git download litecoin
-      git: repo=https://github.com/litecoin-project/litecoin.git dest={{tmpdir}}/litecoin
     - name: expand openssl
       command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
     - name: configure openssl
@@ -34,19 +36,21 @@
     - name: make miniupnpc
       command: make chdir={{tmpdir}}/miniupnp/miniupnpc
     - name: prepare
-      file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/litecoin/src/openssl state=link
+      file: src={{tmpdir}}/openssl-1.0.1f/include/openssl path={{tmpdir}}/{{coinname}}/src/openssl state=link
     - name: prepare
-      file: src={{tmpdir}}/miniupnp/miniupnpc path={{tmpdir}}/litecoin/src/miniupnpc state=link
+      file: src={{tmpdir}}/miniupnp/miniupnpc path={{tmpdir}}/{{coinname}}/src/miniupnpc state=link
     - name: prepare
-      file: src={{tmpdir}}/miniupnp/miniupnpc/libminiupnpc.a path={{tmpdir}}/litecoin/src/libminiupnpc.a state=link
-    - name: make litecoin
-      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L." chdir={{tmpdir}}/litecoin/src
+      file: src={{tmpdir}}/miniupnp/miniupnpc/libminiupnpc.a path={{tmpdir}}/{{coinname}}/src/libminiupnpc.a state=link
+    - name: make {{coinname}}
+      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L." chdir={{tmpdir}}/{{coinname}}/src
     - name: install directory create
       file: dest={{installdir}}/{{item}} state=directory
       with_items:
       - bin
       - etc
       - data
-    - name: install litecoind {{installdir}}/bin/litecoind
-      command: cp {{tmpdir}}/litecoin/src/litecoind {{installdir}}/bin/litecoind creates={{installdir}}/bin/litecoind
+    - name: install {{coinname}}d {{installdir}}/bin/{{coinname}}d
+      command: cp {{tmpdir}}/{{coinname}}/src/{{coinname}}d {{installdir}}/bin/{{coinname}}d creates={{installdir}}/bin/{{coinname}}d
+    - name: init script copy
+      template: src=templates/coind/init.j2 dest=/etc/init.d/{{coinname}}d mode=0755
 

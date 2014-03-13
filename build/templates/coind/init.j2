@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# {{coinname}}d      Start {{coinname}}d
+#
+# chkconfig: 2345 08 92
+# description:  Starts, stops
+#
+
+# Source function library.
+. /etc/init.d/functions
+#
+COINDIR=/opt/{{coinname}}
+DAEMON=$COINDIR/bin/{{coinname}}d
+CONF=$COINDIR/etc/{{coinname}}.conf
+DATA=$COINDIR/data
+start() {
+        $DAEMON -conf=$CONF -datadir=$DATA -daemon
+}
+stop() {
+        $DAEMON -conf=$CONF stop
+}
+restart() {
+    stop
+    sleep 1
+    start
+}
+getinfo() {
+    $DAEMON -conf=$CONF getinfo
+}
+case "$1" in
+    start)
+        start
+        RETVAL=$?
+        ;;
+    stop)
+        stop
+        RETVAL=$?
+        ;;
+    restart|force-reload)
+        restart
+        RETVAL=$?
+        ;;
+    getinfo)
+        getinfo
+        RETVAL=$?
+        ;;
+    *)
+        echo $"Usage: {start|stop|restart|getinfo}"
+        RETVAL=2
+        ;;
+esac
+
+exit $RETVAL
