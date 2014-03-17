@@ -7,7 +7,7 @@
     gitrepo: https://github.com/litecoin-project/litecoin.git
     tmpdir: /tmp/{{coinname}}
     installdir: /opt/{{coinname}}
-    version: master
+    version: v0.8.6.2
   tasks:
     - name: yum install
       yum: name={{item}} state=installed

@@ -21,11 +21,12 @@ stop() {
 }
 restart() {
     stop
-    sleep 1
+    sleep 3
     start
 }
 getinfo() {
     $DAEMON -conf=$CONF getinfo
+    $DAEMON -conf=$CONF getmininginfo
 }
 case "$1" in
     start)
