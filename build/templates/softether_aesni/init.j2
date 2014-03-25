@@ -1,9 +1,9 @@
 #!/bin/sh
 # chkconfig: 2345 99 01
-# description: Softether VPN {{vpnname}}
+# description: Softether VPN {{item}}
 
-DAEMON=/usr/bin/{{vpnname}}
-LOCK=/var/lock/subsys/{{vpnname}}
+DAEMON=/usr/bin/{{item}}
+LOCK=/var/lock/subsys/{{item}}
 
 test -x $DAEMON || exit 0
 

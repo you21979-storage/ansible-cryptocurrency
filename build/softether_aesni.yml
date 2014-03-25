@@ -31,3 +31,9 @@
       command: make chdir={{tmpdir}}/softether
     - name: install
       command: make install chdir={{tmpdir}}/softether
+    - name: init script copy
+      template: src=templates/softether_aesni/init.j2 dest=/etc/init.d/{{item}} mode=0755
+      with_items:
+        - vpnserver
+        - vpnbridge
+        - vpnclient
