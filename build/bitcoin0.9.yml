@@ -23,7 +23,7 @@
     - name: www download bdb4.8
       get_url: url=http://download.oracle.com/berkeley-db/db-4.8.30.tar.gz dest={{tmpdir}} mode=0440
     - name: www download openssl
-      get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
+      get_url: url=http://www.openssl.org/source/openssl-1.0.1g.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
     - name: git download bitcoin
@@ -48,13 +48,13 @@
       - libdb_cxx-4.8.so
 
     - name: expand openssl
-      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
+      command: tar zxvf {{tmpdir}}/openssl-1.0.1g.tar.gz chdir={{tmpdir}}
     - name: configure openssl
-      command: ./config no-shared no-dso --prefix={{tmpdir}} chdir={{tmpdir}}/openssl-1.0.1f
+      command: ./config no-shared no-dso --prefix={{tmpdir}} chdir={{tmpdir}}/openssl-1.0.1g
     - name: make openssl
-      command: make chdir={{tmpdir}}/openssl-1.0.1f
+      command: make chdir={{tmpdir}}/openssl-1.0.1g
     - name: make install openssl -> {{tmpdir}}
-      command: make install chdir={{tmpdir}}/openssl-1.0.1f
+      command: make install chdir={{tmpdir}}/openssl-1.0.1g
 
     - name: make miniupnpc
       command: make chdir={{tmpdir}}/miniupnp/miniupnpc

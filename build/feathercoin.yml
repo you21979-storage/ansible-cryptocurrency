@@ -23,18 +23,18 @@
     - name: git download {{coinname}}
       git: repo={{gitrepo}} dest={{tmpdir}}/{{coinname}} version={{version}}
     - name: www download openssl
-      get_url: url=http://www.openssl.org/source/openssl-1.0.1f.tar.gz dest={{tmpdir}} mode=0440
+      get_url: url=http://www.openssl.org/source/openssl-1.0.1g.tar.gz dest={{tmpdir}} mode=0440
     - name: www download bdb4.8
       get_url: url=http://download.oracle.com/berkeley-db/db-4.8.30.tar.gz dest={{tmpdir}} mode=0440
     - name: git download miniupnp
       git: repo=https://github.com/miniupnp/miniupnp.git dest={{tmpdir}}/miniupnp
 
     - name: expand openssl
-      command: tar zxvf {{tmpdir}}/openssl-1.0.1f.tar.gz chdir={{tmpdir}}
+      command: tar zxvf {{tmpdir}}/openssl-1.0.1g.tar.gz chdir={{tmpdir}}
     - name: configure openssl
-      command: ./config chdir={{tmpdir}}/openssl-1.0.1f
+      command: ./config chdir={{tmpdir}}/openssl-1.0.1g
     - name: make openssl
-      command: make chdir={{tmpdir}}/openssl-1.0.1f
+      command: make chdir={{tmpdir}}/openssl-1.0.1g
 
     - name: expand bdb4.8
       command: tar zxvf {{tmpdir}}/db-4.8.30.tar.gz chdir={{tmpdir}}
@@ -47,7 +47,7 @@
       command: make SHAREDLIBRARY="libminiupnpc.x" chdir={{tmpdir}}/miniupnp/miniupnpc
 
     - name: make {{coinname}}
-      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt CXXFLAGS="-I{{tmpdir}}/db-4.8.30/build_unix -I{{tmpdir}}/openssl-1.0.1f/include -I{{tmpdir}}/miniupnp" LDFLAGS="-L{{tmpdir}}/openssl-1.0.1f -L{{tmpdir}}/db-4.8.30/build_unix -L{{tmpdir}}/miniupnp/miniupnpc" chdir={{tmpdir}}/{{coinname}}/src
+      command: make -f makefile.unix BOOST_LIB_SUFFIX=-mt CXXFLAGS="-I{{tmpdir}}/db-4.8.30/build_unix -I{{tmpdir}}/openssl-1.0.1g/include -I{{tmpdir}}/miniupnp" LDFLAGS="-L{{tmpdir}}/openssl-1.0.1g -L{{tmpdir}}/db-4.8.30/build_unix -L{{tmpdir}}/miniupnp/miniupnpc" chdir={{tmpdir}}/{{coinname}}/src
     - name: install directory create
       file: dest={{installdir}}/{{item}} state=directory
       with_items:
