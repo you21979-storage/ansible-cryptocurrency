@@ -3,11 +3,11 @@
   user: root
 
   vars:
-    coinname: monacoin
-    gitrepo:  https://github.com/monacoinproject/monacoin.git
+    coinname: primecoin
+    gitrepo: https://github.com/primecoin/primecoin.git
     tmpdir: /tmp/{{coinname}}
     installdir: /opt/{{coinname}}
-    version: 0.8.7.0
+    version: master
   tasks:
     - name: yum install
       yum: name={{item}} state=installed
